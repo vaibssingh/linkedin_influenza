@@ -22,13 +22,15 @@ impl DB {
             std::env::var("MONGODB_POSTS_COLLECTION").expect("MONGODB_POSTS_COLLECTION is not set");
 
         let mut client_options = ClientOptions::parse(mongodb_uri).await?;
-        client_options.app_name = Some(mongodb_posts_collection.to_string());
+        client_options.app_name = Some(database_name.to_string());
 
-        let client = Client::with_options(client_options).unwrap();
+        let client = Client::with_options(client_options)?;
         let database = client.database(database_name.as_str());
 
         let posts_collection = database.collection(mongodb_posts_collection.as_str());
         let collection = database.collection::<Document>(mongodb_posts_collection.as_str());
+
+        println!("✅ Database connected successfully");
 
         Ok(Self {
             posts_collection,
